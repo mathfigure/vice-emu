@@ -6,6 +6,9 @@
  *  Ettore Perazzoli <ettore@comm2000.it>
  *  Andreas Boose <viceteam@t-online.de>
  *
+ * Redpill patch by
+ *   mathfigure <mathfigure@gmail.com>
+ *
  * This file is part of VICE, the Versatile Commodore Emulator.
  * See README for copyright notice.
  *
@@ -40,7 +43,7 @@ typedef store_func_t *store_func_ptr_t;
 extern read_func_ptr_t *_mem_read_tab_ptr;
 extern store_func_ptr_t *_mem_write_tab_ptr;
 
-extern BYTE mem_ram[];
+extern BYTE *mem_ram;
 extern BYTE *mem_page_zero;
 extern BYTE *mem_page_one;
 extern BYTE *mem_color_ram_cpu;
@@ -97,5 +100,9 @@ extern mem_ioreg_list_t *mem_ioreg_list_get(void *context);
 struct snapshot_s;
 extern int mem_write_snapshot_module(struct snapshot_s *s, int save_roms);
 extern int mem_read_snapshot_module(struct snapshot_s *s);
+
+/* redpill */
+extern void redpill_mem_init(void);
+extern void* shared_new(int size, const char *sid);
 
 #endif

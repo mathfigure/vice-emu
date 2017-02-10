@@ -10,6 +10,9 @@
  *  Andre Fachat <a.fachat@physik.tu-chemnitz.de>
  *  Andreas Boose <viceteam@t-online.de>
  *
+ * Redpill patch by
+ *   mathfigure <mathfigure@gmail.com>
+ *
  * This file is part of VICE, the Versatile Commodore Emulator.
  * See README for copyright notice.
  *
@@ -33,6 +36,7 @@
 /* #define DEBUG_MAIN */
 
 #include "vice.h"
+#include "redpill.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -153,6 +157,7 @@ int main_program(int argc, char **argv)
         return -1;
     }
 
+    redpill_init();
     maincpu_early_init();
     machine_setup_context();
     drive_setup_context();

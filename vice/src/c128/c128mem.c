@@ -6,6 +6,9 @@
  *  Ettore Perazzoli <ettore@comm2000.it>
  *  Marco van den Heuvel <blackystardust68@yahoo.com>
  *
+ * Redpill patch by
+ *   mathfigure <mathfigure@gmail.com>
+ *
  * Based on the original work in VICE 0.11.0 by
  *  Jouko Valta <jopi@stekt.oulu.fi>
  *
@@ -85,7 +88,7 @@
 #define NUM_VBANKS 4
 
 /* The C128 memory.  */
-BYTE mem_ram[C128_RAM_SIZE];
+BYTE *mem_ram;
 BYTE mem_chargen_rom[C128_CHARGEN_ROM_SIZE];
 
 /* Internal color memory.  */
@@ -1528,4 +1531,11 @@ void c128_c64io_df00_store(WORD addr, BYTE value)
 {
     vicii_clock_write_stretch();
     c64io_df00_store(addr, value);
+}
+
+/* ------------------------------------------------------------------------- */
+
+void redpill_mem_init()
+{
+    mem_ram = (BYTE*) shared_new(C128_RAM_SIZE, "C128_RAM");
 }

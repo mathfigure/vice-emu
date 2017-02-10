@@ -7,6 +7,9 @@
  *  Andreas Boose <viceteam@t-online.de>
  *  Marco van den Heuvel <blackystardust68@yahoo.com>
  *
+ * Redpill patch by
+ *   mathfigure <mathfigure@gmail.com>
+ *
  * This file is part of VICE, the Versatile Commodore Emulator.
  * See README for copyright notice.
  *
@@ -81,7 +84,7 @@ petres_t petres = { 0 };
 
 #define RAM_ARRAY 0x20000 /* this includes 8x96 expansion RAM */
 
-BYTE mem_ram[RAM_ARRAY]; /* 128K to make things easier. Real size is 4-128K. */
+BYTE *mem_ram; /* 128K to make things easier. Real size is 4-128K. */
 BYTE mem_rom[PET_ROM_SIZE];
 BYTE mem_chargen_rom[PET_CHARGEN_ROM_SIZE];
 BYTE mem_6809rom[PET_6809_ROMSIZE];
@@ -1879,4 +1882,11 @@ void petmem_check_info(petres_t *pi)
 int cartridge_attach_image(int type, const char *name)
 {
     return -1;
+}
+
+/* ------------------------------------------------------------------------- */
+
+void redpill_mem_init()
+{
+    mem_ram = (BYTE*) shared_new(RAM_ARRAY, "PET_RAM");
 }

@@ -6,6 +6,9 @@
  *  Tibor Biczo <crown@axelero.hu>
  *  Marco van den Heuvel <blackystardust68@yahoo.com>
  *
+ * Redpill patch by
+ *   mathfigure <mathfigure@gmail.com>
+ *
  * This file is part of VICE, the Versatile Commodore Emulator.
  * See README for copyright notice.
  *
@@ -30,6 +33,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 
 #include "cartio.h"
 #include "datasette.h"
@@ -62,7 +66,7 @@ static int hard_reset_flag = 1;
 #define NUM_CONFIGS     32
 
 /* The Plus4 memory.  */
-BYTE mem_ram[PLUS4_RAM_SIZE];
+BYTE *mem_ram; /* => issues with chargen_tab[][], resolved  */
 
 #ifdef USE_EMBEDDED
 #include "plus43plus1lo.h"
@@ -100,10 +104,10 @@ unsigned int mem_config;
 
 /* ------------------------------------------------------------------------- */
 
-#define RAM0 mem_ram + 0x0000
-#define RAM4 mem_ram + 0x4000
-#define RAM8 mem_ram + 0x8000
-#define RAMC mem_ram + 0xc000
+#define RAM0 (BYTE*)0x0000
+#define RAM4 (BYTE*)0x4000
+#define RAM8 (BYTE*)0x8000
+#define RAMC (BYTE*)0xc000
 
 static BYTE *chargen_tab[8][16] = {
     /* 0000-3fff, RAM selected  */
@@ -606,26 +610,26 @@ void mem_initialize_memory(void)
         case 256:
         case 64:
             for (i = 0; i < 16; i++) {
-                chargen_tab[1][i] = RAM4;
-                chargen_tab[2][i] = RAM8;
-                chargen_tab[3][i] = RAMC;
-                chargen_tab[5][i] = RAM4;
+                chargen_tab[1][i] = (uintptr_t) mem_ram + RAM4;
+                chargen_tab[2][i] = (uintptr_t) mem_ram + RAM8;
+                chargen_tab[3][i] = (uintptr_t) mem_ram + RAMC;
+                chargen_tab[5][i] = (uintptr_t) mem_ram + RAM4;
             }
             break;
         case 32:
             for (i = 0; i < 16; i++) {
-                chargen_tab[1][i] = RAM4;
-                chargen_tab[2][i] = RAM0;
-                chargen_tab[3][i] = RAM4;
-                chargen_tab[5][i] = RAM4;
+                chargen_tab[1][i] = (uintptr_t) mem_ram + RAM4;
+                chargen_tab[2][i] = (uintptr_t) mem_ram + RAM0;
+                chargen_tab[3][i] = (uintptr_t) mem_ram + RAM4;
+                chargen_tab[5][i] = (uintptr_t) mem_ram + RAM4;
             }
             break;
         case 16:
             for (i = 0; i < 16; i++) {
-                chargen_tab[1][i] = RAM0;
-                chargen_tab[2][i] = RAM0;
-                chargen_tab[3][i] = RAM0;
-                chargen_tab[5][i] = RAM0;
+                chargen_tab[1][i] = (uintptr_t) mem_ram + RAM0;
+                chargen_tab[2][i] = (uintptr_t) mem_ram + RAM0;
+                chargen_tab[3][i] = (uintptr_t) mem_ram + RAM0;
+                chargen_tab[5][i] = (uintptr_t) mem_ram + RAM0;
             }
             break;
     }
@@ -877,6 +881,13 @@ void mem_mmu_translate(unsigned int addr, BYTE **base, int *start, int *limit)
 /* Initialize RAM for power-up.  */
 void mem_powerup(void)
 {
+    /* redpill */
+    int i,j;
+    if(chargen_tab[0][0] == 0)
+        for(j=0; j<8-2; j++)
+            for(i=0; i<16; i++)
+                chargen_tab[j][i] += (uintptr_t) mem_ram;
+
     ram_init(mem_ram, 0x10000);
 
     hard_reset_flag = 1;
@@ -1308,4 +1319,11 @@ void plus4io_init(void)
     pio2_list_item = io_source_register(&pio2_device);
     tcbm1_list_item = io_source_register(&tcbm1_device);
     tcbm2_list_item = io_source_register(&tcbm2_device);
+}
+
+/* ------------------------------------------------------------------------- */
+
+void redpill_mem_init()
+{
+    mem_ram = (BYTE*) shared_new(PLUS4_RAM_SIZE, "PLUS4_RAM");
 }

@@ -6,6 +6,9 @@
  *  Andreas Boose <viceteam@t-online.de>
  *  Ettore Perazzoli <ettore@comm2000.it>
  *
+ * Redpill patch by
+ *   mathfigure <mathfigure@gmail.com>
+ *
  * This file is part of VICE, the Versatile Commodore Emulator.
  * See README for copyright notice.
  *
@@ -87,7 +90,7 @@ static const WORD mem_mirrors[NUM_MIRRORS] = {
 };
 
 /* The C64 memory.  */
-BYTE mem_ram[SCPU64_RAM_SIZE];
+BYTE *mem_ram;
 BYTE mem_sram[SCPU64_SRAM_SIZE];
 BYTE mem_trap_ram[SCPU64_KERNAL_ROM_SIZE];
 BYTE *mem_simm_ram = NULL;
@@ -1828,4 +1831,11 @@ void scpu64_mem_shutdown(void)
 {
     lib_free(mem_simm_ram);
     mem_simm_ram = NULL;
+}
+
+/* ------------------------------------------------------------------------- */
+
+void redpill_mem_init()
+{
+    mem_ram = (BYTE*) shared_new(SCPU64_RAM_SIZE, "C64_RAM");
 }

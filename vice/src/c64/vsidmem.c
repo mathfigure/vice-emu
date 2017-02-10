@@ -7,6 +7,9 @@
  *  groepaz <groepaz@gmx.net>
  *  Marco van den Heuvel <blackystardust68@yahoo.com>
  *
+ * Redpill patch by
+ *   mathfigure <mathfigure@gmail.com>
+ *
  * This file is part of VICE, the Versatile Commodore Emulator.
  * See README for copyright notice.
  *
@@ -73,7 +76,7 @@ int machine_class = VICE_MACHINE_VSID;
 #define NUM_VBANKS      4
 
 /* The C64 memory.  */
-BYTE mem_ram[C64_RAM_SIZE];
+BYTE *mem_ram;
 
 #ifdef USE_EMBEDDED
 #include "c64chargen.h"
@@ -895,4 +898,11 @@ void mem_color_ram_to_snapshot(BYTE *color_ram)
 void mem_color_ram_from_snapshot(BYTE *color_ram)
 {
     memcpy(mem_color_ram, color_ram, 0x400);
+}
+
+/* ------------------------------------------------------------------------- */
+
+void redpill_mem_init()
+{
+    mem_ram = (BYTE*) shared_new(C64_RAM_SIZE, "C64_RAM");
 }

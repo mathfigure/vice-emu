@@ -257,7 +257,8 @@ noinst_HEADERS = \
 	wdc65816.h \
 	z80regs.h \
 	zfile.h \
-	zipcode.h
+	zipcode.h \
+	redpill.h
 
 base_sources = \
 	alarm.c \
@@ -312,7 +313,8 @@ base_sources = \
 	vicefeatures.c \
 	vsync.c \
 	zfile.c \
-	zipcode.c
+	zipcode.c \
+	redpill.c
 
 ps2mouse_sources = \
 	ps2mouse.c

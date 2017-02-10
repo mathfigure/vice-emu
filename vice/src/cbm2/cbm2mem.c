@@ -4,6 +4,9 @@
  * Written by
  *  Andre Fachat <fachat@physik.tu-chemnitz.de>
  *
+ * Redpill patch by
+ *   mathfigure <mathfigure@gmail.com>
+ *
  * This file is part of VICE, the Versatile Commodore Emulator.
  * See README for copyright notice.
  *
@@ -64,7 +67,7 @@ void cia1_set_extended_keyboard_rows_mask(BYTE foo)
 /* ------------------------------------------------------------------------- */
 /* The CBM-II memory. */
 
-BYTE mem_ram[CBM2_RAM_SIZE];            /* 1M, banks 0-14 plus extension RAM
+BYTE *mem_ram;                          /* 1M, banks 0-14 plus extension RAM
                                            in bank 15 */
 BYTE mem_rom[CBM2_ROM_SIZE];            /* complete bank 15 ROM + video RAM */
 BYTE mem_chargen_rom[CBM2_CHARGEN_ROM_SIZE];
@@ -1080,4 +1083,11 @@ void cbm2io_init(void)
     acia_list_item = io_source_register(&acia_device);
     tpi1_list_item = io_source_register(&tpi1_device);
     tpi2_list_item = io_source_register(&tpi2_device);
+}
+
+/* ------------------------------------------------------------------------- */
+
+void redpill_mem_init()
+{
+    mem_ram = (BYTE*) shared_new(CBM2_RAM_SIZE, "CBM2_RAM");
 }

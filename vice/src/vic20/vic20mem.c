@@ -10,6 +10,9 @@
  * Multiple memory configuration support originally by
  *  Alexander Lehmann <alex@mathematik.th-darmstadt.de>
  *
+ * Redpill patch by
+ *   mathfigure <mathfigure@gmail.com>
+ *
  * This file is part of VICE, the Versatile Commodore Emulator.
  * See README for copyright notice.
  *
@@ -64,7 +67,7 @@
 /* ------------------------------------------------------------------------- */
 
 /* The VIC20 memory. */
-BYTE mem_ram[VIC20_RAM_SIZE];
+BYTE *mem_ram;
 
 BYTE vfli_ram[0x4000]; /* for mikes vfli modification */
 
@@ -628,3 +631,9 @@ void mem_get_screen_parameter(WORD *base, BYTE *rows, BYTE *columns, int *bank)
     *bank = 0;
 }
 
+/* ------------------------------------------------------------------------- */
+
+void redpill_mem_init()
+{
+    mem_ram = (BYTE*) shared_new(VIC20_RAM_SIZE, "VIC20_RAM");
+}
